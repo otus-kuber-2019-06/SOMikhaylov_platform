@@ -27,6 +27,9 @@ SOMikhaylov Platform repository
 2. kubectl  describe  pod  web
 3. kubectl port-forward --address 0.0.0.0 pod/web 8000:8000
 
+проверка:
+  - http://localhost:8000/index.html
+
 ## Домашнее задание 2 - Что стоит знать о безопасности и управлении доступом Kubernetes.
 #### task1
 1. 01-sa-bob-admin.yaml - создает service account bob, с ролью admin в рамках всего кластера
@@ -54,3 +57,30 @@ SOMikhaylov Platform repository
 проверка:
  - kubectl auth can-i get deployment --as system:serviceaccount:dev:jane -n dev
  - kubectl auth can-i list jobs --as system:serviceaccount:dev:ken -n dev
+
+## Полезные команды.
+minikube:
+- minikube start     - создание/запуск виртуальной машины (VM)
+- minikube stop      - остановка VM
+- minikube delete    - удаление VM
+- minikube ssh       - зайти в VM по ssh
+- minikube dashboard - запустить dashboard
+- minikube mount <local_directory>:<minikube_directory> - смонтировать директорию в миникуб.
+
+$KUBECONFIG:
+- по умолчанию $HOME/.kube/config
+- пример использования сразу нескольких конфигов: export KUBECONFIG=~/.kube/config1:~/.kube/config2:~/.kube/config3
+
+kubectl:
+- kubectl config view         - показывает конфиг кластера k8s ($KUBECONFIG)
+- kubectl cluster-info        - проверка доступа к кластеру.
+- kubectl get pods            - показать поды.
+- kubectl get cs              - показать статус компонентов.
+- kubectl apply -f <...>.yaml - применить манифест.
+- kubectl describe pod <...>  - посмотреть описание пода.
+- kubectl delete pod  <...>   - удалить под.
+- kubectl delete rc   <...>   - удалить ReplicationController.
+- kubectl config get-contexts - посмотреть доступные контексты и контекст по умолчанию (полезно при использование нескольких конфигов).
+- kubectl config use-context <...> - переключиться на другой контекст.
+- kubectl get secrets <...> [-o yaml / -o "jsonpath={.data.token}"] - получить секреты токена (base64).
+- kubectl auth can-i <operation> <resourse> --as system:serviceaccount:<namespace>:<sa-user> -n <namespace> - проверка на наличие доступа для system account user.
