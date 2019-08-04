@@ -132,15 +132,15 @@ strategy:
 - dnf install -y ipvsadm && dnf install -y ipset && dnf clean all
 - ipvsadm --list -n
 #### Установка MetalLB в Layer2-режиме
-- kubectl apply -fhttps://raw.githubusercontent.com/google/metallb/v0.8.0/manifests/metallb.yaml
+- kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.0/manifests/metallb.yaml
 - kubectl --namespace metallb-system get all
 - создан манифест metallb-config.yaml
 
 #### Добавление сервиса Load Balancer
  - создан манифест web-svc-lb.yaml
  - kubectl kubectl describe svc web-svc-lb - посмотреть назначенный ip
- - minikube ssh; ip addr show eth0 - посмотреть адрес в миникубе.
- - ip route add <LB_IP> via <minikube_IP> - добавлен маршрут
+ - minikube ip - посмотреть адрес в миникубе.
+ - ip route add 172.17.255.0/24 via <minikube_IP> - добавлен маршрут
 
  проверка: http://<LB_IP>/index.html
 
@@ -154,6 +154,22 @@ strategy:
 проверка: http://<LB_IP>/web/index.html
 
 ### Задания со *
+#### MetalLB для CoreDNS
+- minikude addoms enable coredns
+- kubectl delete deploy -n kube-system --grace-period=0 --force kube-dns
+- создан манифест coredns-svc-lb.yaml; selector взят из kubectl describe deploy -n kube-system coredns.
+```
+selector:
+  k8s-app: kube-dns
+```
+- kubectl apply -f coredns-svc-lb.yaml
+```
+annotations:
+    metallb.universe.tf/allow-shared-ip
+```
+позволяет использовать один ip адрес для разных сервисов.
+- проверка: nslookup kubernetes.default.svc.cluster.local. 172.17.255.10
+#### Ingress kubernetes-dashboard
 
 ## Полезные команды.
 minikube:
@@ -163,6 +179,8 @@ minikube:
 - minikube ssh       - зайти в VM по ssh
 - minikube dashboard - запустить dashboard
 - minikube mount <local_directory>:<minikube_directory> - смонтировать директорию в миникуб.
+- minikube addons list - список аддонов
+- minikube addins disable/enable <...> - поключить/отключить addon
 - toolbox - контейнер с Fedora (выполнить внутри миникуб).
 
 $KUBECONFIG:

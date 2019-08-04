@@ -8,9 +8,9 @@ spec:
   containers:
   - name: web
     image: somikhaylov/python_web:1.0
-    readinessProbe:       # проверка готовности
-      httpGet:            # веб-сервера отдавать
-        path: /index.html # контент
+    readinessProbe:
+      httpGet:
+        path: /index.html
         port: 8000
     livenessProbe:
       tcpSocket:
