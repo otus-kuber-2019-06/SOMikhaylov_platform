@@ -135,9 +135,11 @@ strategy:
 - kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.0/manifests/metallb.yaml
 - kubectl --namespace metallb-system get all
 - создан манифест metallb-config.yaml
+- kubectl apply -f metallb-config.yaml
 
 #### Добавление сервиса Load Balancer
  - создан манифест web-svc-lb.yaml
+ - kubectl apply -f web-svc-lb.yaml
  - kubectl kubectl describe svc web-svc-lb - посмотреть назначенный ip
  - minikube ip - посмотреть адрес в миникубе.
  - ip route add 172.17.255.0/24 via <minikube_IP> - добавлен маршрут
@@ -145,12 +147,15 @@ strategy:
  проверка: http://<LB_IP>/index.html
 
 #### Установка Ingress-контроллера и прокси ingress-nginx
-- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 - создан манифест nginx-lb.yaml
+- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
+- kubectl apply -f nginx-lb.yaml
 - curl -L <LB_IP>
 #### Создание правил Ingress
 - создан web-svc-headless.yaml
 - создан web-ingress.yaml
+- kubectl apply -f web-svc-headless.yaml
+- kubectl apply -f web-ingress.yaml
 проверка: http://<LB_IP>/web/index.html
 
 ### Задания со *
