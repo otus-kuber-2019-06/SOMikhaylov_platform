@@ -172,9 +172,34 @@ selector:
 annotations:
     metallb.universe.tf/allow-shared-ip
 ```
-позволяет использовать один ip адрес для разных сервисов.
-- проверка: nslookup kubernetes.default.svc.cluster.local. 172.17.255.10
+- annotations позволяет использовать один ip адрес для разных сервисов.
+проверка:
+ - nslookup kubernetes.default.svc.cluster.local. 172.17.255.10
+
 #### Ingress kubernetes-dashboard
+- создан манифест dashboard-ingress.yaml; kubectl apply -f dashboard-ingress.yaml
+проверка:
+- открыть в браузере <LB_IP>/dashboard/
+
+#### Ingress canary deployment
+- kubectl apply -f echo-prod-deploy.yaml - создаем namespace echo-prod; deployment http-svc; service http-svc;
+- kubectl apply -f echo-prod-ingress.yaml - http://<LB_IP>/canary
+проверка:
+- curl -H "Host: echo.com" http://<LB_IP>/canary
+- kubectl apply -f echo-canary-deploy.yaml - создаем namespace echo-canary; deployment http-svc; service http-svc;
+- kubectl apply -f echo-canary-ingress.yaml - http://<LB_IP>/canary
+- nginx.ingress.kubernetes.io/canary: "true" - Это означает, что Kubernetes не будет рассматривать этот Ingress как самостоятельный и пометит его как Canary, связав с основным Ingress.
+- nginx.ingress.kubernetes.io/canary-weight: "50" - "50" означает, что на Canary будет приходиться примерно 50% всех запросов
+проверка canary deployment:
+- curl -s -H "Host: echo.com" http://<LB_IP>/canary | grep 'pod namespace'
+```
+curl -s -H "Host: echo.com" http://172.17.255.1/canary | grep 'pod namespace'
+ pod namespace:	echo-prod
+```
+```
+curl -s -H "Host: echo.com" http://172.17.255.1/canary | grep 'pod namespace'
+	pod namespace:	echo-canary
+```
 
 ## Полезные команды.
 minikube:
