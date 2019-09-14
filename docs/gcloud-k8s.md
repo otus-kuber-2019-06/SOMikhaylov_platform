@@ -13,8 +13,8 @@ terraform apply
 export TF_VAR_project = "your-gcloud-project-name"
 ```  
 ### Ansible dynamic inventory
-1. Ansible будет использоваться для развертывания кластера с помощью kubespay и при возможность в домашних заданиях. В связи с тем, что количество узлоа кластера будем переодически изменять, то будем используем dynamic inventory (Директория - ansible_inventory).
-2. Настройку проводим в соответсвии с https://docs.ansible.com/ansible/2.5/scenario_guides/guide_gce.html .
+1. Ansible будет использоваться для развертывания кластера с помощью kubespray и по возможности в домашних заданиях. В связи с тем, что количество узлов кластера будет переодически изменяться, то используется dynamic inventory (Директория - ansible_inventory).
+2. Настройку проводим в соответствии с https://docs.ansible.com/ansible/2.5/scenario_guides/guide_gce.html .
 3. Потребуется вынести некоторые данные в системные переменные:
 ```
 export GCE_EMAIL = "you_email_gcloud"
@@ -44,3 +44,4 @@ supplementary_addresses_in_ssl_keys: ["{{ lookup('env','KUBERNETES_PUBLIC_ADDRES
 ```
 ansible-playbook ../kubespray/cluster.yml
 ```
+5. Копируем c мастер-ноды /etc/kubernetess/admin.conf на свою машину в ~/.kube/config. Меняем ip адрес в конфиге на тот,что в KUBERNETES_PUBLIC_ADDRESS.
