@@ -1,4 +1,4 @@
-resource "google_compute_instance" "k8s-worker" {
+resource "google_compute_instance" "iscsi-target" {
   boot_disk {
     auto_delete = true
 
@@ -9,22 +9,19 @@ resource "google_compute_instance" "k8s-worker" {
   }
 
   can_ip_forward = true
-  count          = "${var.worker-count}"
   machine_type   = "${var.worker-type}"
-  name           = "worker-${count.index}"
-  tags           = ["worker"]
+  name           = "iscsi-target"
+  tags           = ["iscsi-target"]
   zone           = "${var.zone}"
 
-
   network_interface {
-    network_ip = "10.0.0.2${count.index}"
+    network_ip = "10.0.0.100"
     subnetwork = "${google_compute_subnetwork.k8s-subnet.name}"
     access_config {
     }
   }
-
   network_interface {
-    network_ip = "192.168.0.2${count.index}"
+    network_ip = "192.168.0.100"
     subnetwork = "${google_compute_subnetwork.k8s-iscsi-subnet.name}"
   }
 

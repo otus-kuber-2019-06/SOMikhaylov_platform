@@ -81,3 +81,4 @@ cat /data/snapdata
 ## Задание со *
 1. Метод разворачивания кластера для выполнения домашнего задания описан в * [Развертывание кластера kubernetes в gcloud с помощью IaC подхода.] (docs/gcloud-k8s.md)
 2. В данном ДЗ используется кластер из 3-х мастер нод и 2-х воркер нод. На нодах используется centos7.
+3. Инфраструктура iscsi-target описана в terraform-infra/iscsi-network.tf и terraform-infra/iscsi-target.tf

@@ -63,21 +63,11 @@ resource "google_compute_firewall" "k8s_lbfirewall" {
 
 }
 
-resource "google_compute_http_health_check" "k8s-lbhealthcheck" {
-  host         = "kubernetes.default.svc.cluster.local"
-  name         = "k8s-lbhealthcheck"
-  request_path = "/healthz"
-}
-
 resource "google_compute_target_pool" "k8s-lbtartgetpool" {
   name = "k8s-lbtartgetpool"
   instances = [
     for controller in google_compute_instance.k8s-controller :
     "${var.zone}/${controller.name}"
-  ]
-
-  health_checks = [
-    "${google_compute_http_health_check.k8s-lbhealthcheck.name}",
   ]
 }
 
