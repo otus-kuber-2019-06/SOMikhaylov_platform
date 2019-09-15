@@ -1,0 +1,33 @@
+---
+- name: install packages iscsi-target
+  hosts: tag_iscsi-target
+  tasks:
+  - name: install infrastracture server
+    yum:
+      name: "@^Infrastructure Server"
+      state: present
+
+  - name: Install targetcli packages
+    yum:
+      name: 'targetcli'
+      state: 'installed'
+
+  - name: Start and enable targetcli service
+    service:
+      name: 'target'
+      enabled: true
+      state: 'started'
+
+  - name: Enable port 3260/tcp on firewalld
+    firewalld:
+      port: '3260/tcp'
+      permanent: true
+      state: 'enabled'
+    notify:
+      - restart firewalld
+
+  handlers:
+  - name: restart firewalld
+    service:
+      name: firewalld
+      state: restarted

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: iscsi-storage
+  iscsi:
+     targetPortal: 192.168.0.100:3260
+     iqn: iqn.2003-01.org.linux-iscsi.iscsi-target.x8664:sn.42e5cd9958f1
+     lun: 0
+     fsType: 'ext4'
+     readOnly: false

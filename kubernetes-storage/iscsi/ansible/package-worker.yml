@@ -1,0 +1,8 @@
+---
+- name: install packages worker
+  hosts: tag_worker
+  tasks:
+  - name: install iscsi-initiator-utils
+    yum:
+      name: 'iscsi-initiator-utils'
+      state: 'installed'

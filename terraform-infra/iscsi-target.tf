@@ -1,3 +1,9 @@
+resource "google_compute_disk" "iscsi-target-disk" {
+  name = "iscsi-target-disk"
+  size = "100"
+  zone = "${var.zone}"
+}
+
 resource "google_compute_instance" "iscsi-target" {
   boot_disk {
     auto_delete = true
@@ -13,6 +19,11 @@ resource "google_compute_instance" "iscsi-target" {
   name           = "iscsi-target"
   tags           = ["iscsi-target"]
   zone           = "${var.zone}"
+
+
+  attached_disk {
+    source = "${google_compute_disk.iscsi-target-disk.self_link}"
+  }
 
   network_interface {
     network_ip = "10.0.0.100"

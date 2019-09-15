@@ -1,0 +1,13 @@
+- name: Create a Volume
+  hosts: tag_iscsi-target
+  tasks:
+  - name: Create VG
+    lvg:
+      vg: vg_iscsi
+      pvs: /dev/sdb
+
+  - name: Create a LVM
+    lvol:
+      vg: vg_iscsi
+      lv: lv_iscsi
+      size: +10%FREE
