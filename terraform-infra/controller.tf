@@ -22,11 +22,6 @@ resource "google_compute_instance" "k8s-controller" {
     }
   }
 
-  network_interface {
-    network_ip = "192.168.0.1${count.index}"
-    subnetwork = "${google_compute_subnetwork.k8s-iscsi-subnet.name}"
-  }
-
   service_account {
     scopes = ["compute-rw", "storage-ro", "service-management", "service-control", "logging-write", "monitoring"]
   }

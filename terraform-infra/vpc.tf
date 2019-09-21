@@ -40,7 +40,6 @@ resource "google_compute_firewall" "k8s-externalfirewall" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "6443"]
   }
 
   source_ranges = ["0.0.0.0/0"]
