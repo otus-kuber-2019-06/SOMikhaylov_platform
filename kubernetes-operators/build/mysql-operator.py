@@ -113,7 +113,7 @@ def mysql_on_create(body, spec, **kwargs):
         api.create_namespaced_persistent_volume_claim('default', backup_pvc)
     except kubernetes.client.rest.ApiException:
         pass
-
+    
 
 @kopf.on.delete('otus.homework', 'v1', 'mysqls')
 def delete_object_make_backup(body, **kwargs):
@@ -123,7 +123,7 @@ def delete_object_make_backup(body, **kwargs):
     database = body['spec']['database']
 
     delete_success_jobs(name)
-
+    
     # Cоздаем backup job:
     api = kubernetes.client.BatchV1Api()
     backup_job = render_template('backup-job.yml.j2', {
