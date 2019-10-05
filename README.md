@@ -7,7 +7,6 @@ SOMikhaylov Platform repository
 * [Домашнее задание 3 -  Обзор сетевой подсистемы Kubernetes.](docs/kubernetes-networks.md)
 * [Домашнее задание 4 - Volumes, Storages, Statefull-приложения в Kubernetes.](docs/kubernetes-volumes.md)
 * [Домашнее задание 5 - CSI. Обзор подсистем хранения данных в Kubernetes. ](docs/kubernetes-storage.md)
-* [Домашнее задание 6 - Диагностика и отладка кластера и приложений в нем.](docs/kubernetes-debug.md)
 * [Домашнее задание 7 -  Custom Resource Definitions. Operators – Новый помощник платформенной и продуктовым командам. ](docs/kubernetes-operators.md)
 
 ## Прочее
