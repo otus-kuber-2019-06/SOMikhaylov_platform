@@ -1,9 +1,8 @@
-## Разворачиваем k8s кластер
-
-1. Метод разворачивания кластера для выполнения домашнего задания описан в [Развертывание кластера kubernetes в gcloud с помощью IaC подхода.](../docs/gcloud-k8s.md)
-2. В данном ДЗ используется кластер из 3-х мастер нод и 2-х воркер нод. На нодах используется centos7.
-
 ## kubectl debug
+
+* Метод разворачивания кластера для выполнения домашнего задания описан в [Развертывание кластера kubernetes в gcloud с помощью IaC подхода.](../docs/gcloud-k8s.md)
+* В данном ДЗ используется кластер из 3-х мастер нод и 2-х воркер нод. На нодах используется centos7.
+
 
 1. Устанавливаем kubectl debug https://github.com/aylei/kubectl-debug
 2. запускаем kubecl debug на web pod из первого ДЗ
@@ -83,15 +82,84 @@ bash-5.0#
 
 ## iptables-tailer
 
-1. устанавливаем по порядку манифесты
+* Данная часть ДЗ выполнялась значительно позже первого задания (после выполения ДЗ kubernetes-operators). Здесь используется кластер из 1-й мастер ноды и 2-х воркер нод. На нодах используется ubuntu18.04
+* Calico устанавливалось с помощью 
+```
+kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
+```
+
+1. Применяем по порядку манифесты
 ```
 kubectl apply -f kit/crd.yaml
-kubectl apply -f kit/clusterrole.yaml
-kubectl apply -f kit/clusterrolebinding.yaml
+kubectl apply -f kit/rbac.yaml
 kubectl apply -f kit/operator.yaml
-
-```
-2. Запускаем тестовое приложение
-```
 kubectl apply -f kit/cr.yaml
 ```
+проверяем
+```
+➜  kit git:(kubernetes-debug) ✗ kubectl describe netperf.app.example.com/example 
+Name:         example
+Namespace:    default
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"app.example.com/v1alpha1","kind":"Netperf","metadata":{"annotations":{},"name":"example","namespace":"default"}}
+API Version:  app.example.com/v1alpha1
+Kind:         Netperf
+Metadata:
+  Creation Timestamp:  2019-10-06T10:58:53Z
+  Generation:          4
+  Resource Version:    3144
+  Self Link:           /apis/app.example.com/v1alpha1/namespaces/default/netperfs/example
+  UID:                 4df6dfe9-0342-41f4-8c30-733fc577491c
+Spec:
+  Client Node:  
+  Server Node:  
+Status:
+  Client Pod:          netperf-client-733fc577491c
+  Server Pod:          netperf-server-733fc577491c
+  Speed Bits Per Sec:  128.27
+  Status:              Done
+Events:                <none>
+```
+2. Применяем сетевую политику calico
+```
+kubectl apply -f kit/netperf-calico-policy.yaml
+```
+3. Запускаем тест повторно
+```
+kubectl delete -f kit/cr.yaml
+kubectl apply -f kit/cr.yaml
+```
+```
+➜  kubernetes-debug git:(kubernetes-debug) ✗ kubectl describe netperf.app.example.com/example
+Name:         example
+Namespace:    default
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"app.example.com/v1alpha1","kind":"Netperf","metadata":{"annotations":{},"name":"example","namespace":"default"}}
+API Version:  app.example.com/v1alpha1
+Kind:         Netperf
+Metadata:
+  Creation Timestamp:  2019-10-06T11:21:03Z
+  Generation:          3
+  Resource Version:    5197
+  Self Link:           /apis/app.example.com/v1alpha1/namespaces/default/netperfs/example
+  UID:                 f1fb7a09-9af6-41f6-ad55-9e807910db1f
+Spec:
+  Client Node:  
+  Server Node:  
+Status:
+  Client Pod:          netperf-client-9e807910db1f
+  Server Pod:          netperf-server-9e807910db1f
+  Speed Bits Per Sec:  0
+  Status:              Started test
+Events:                <none>
+➜  kubernetes-debug git:(kubernetes-debug) ✗ 
+```
+4. устанавливает iptables-tailer
+```
+kubectl apply -f kit/iptables-tailer.yaml
+kubectl delete -f kit/cr.yaml
+kubectl apply -f kit/cr.yaml
+```
+Смотрим логи в ОС и логи подов.

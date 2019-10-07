@@ -17,7 +17,6 @@ spec:
           image: tailoredcloud/netperf-operator:v0.1.1-742a3e1
           command:
           - netperf-operator
-          imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
