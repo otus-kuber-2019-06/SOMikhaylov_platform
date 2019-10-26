@@ -1,0 +1,9 @@
+repositories:
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+
+releases:
+- name: nginx-ingress
+  chart: stable/nginx-ingress
+  version: 1.24.3
+  namespace: nginx-ingress

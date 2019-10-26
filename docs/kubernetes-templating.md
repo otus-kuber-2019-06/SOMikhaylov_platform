@@ -11,16 +11,17 @@ version.BuildInfo{Version:"v3.0.0-beta.4", GitCommit:"7ffc879f137bd3a69eea53349b
 
 ## Что сделано в ДЗ
 1. установлен Helm2 и tiller с правами cluster-admin.
-  * установлен nginx-ingress.
+* установлен nginx-ingress.
 2. установлен Helm2 и tiller с правами, ограниченными namespace.
-  * протестирована установка cert-manager с помощью данной связки.
-  * сделано самостоятельно задание.
+* протестирована установка cert-manager с помощью данной связки.
+* сделано самостоятельно задание.
 3. установлен plugin helm-tiller, для использования helm без тиллера внутри кластера.
-  * установлен chartmuseum с доступом через ingress по https.
-  * Сделано задание со * (chartmuseum)
+* установлен chartmuseum с доступом через ingress по https.
+* Сделано задание со * (chartmuseum)
 4. установлен Helm3
-  * установлен Harbor с доступом через ingress по https
+* установлен Harbor с доступом через ingress по https
 5. Задание со * - Описан Helmfile для установки nginx-ingres, cert-manager, harbor
+6. Создан свой helm chart
 
 ### Helm 2 и tiller с правами cluster-admin
 1. Создаем service account tiller и даем ему роль cluster-admin
@@ -111,11 +112,11 @@ helm package web-deployment
 ```
 2. добавляем репозиторий chartmuseum 
 ```
-➜ helm repo add chartmuseum https://chartmuseum.35.198.84.6.nip.io/
+➜ helm repo add chartmuseum https://chartmuseum.35.198.84.6.xip.io/
 ```
 3. добавим чарт в репозиторий с помощью curl
 ```
-➜  kubernetes-templating git:(kubernetes-templating) ✗ curl -k --data-binary "@web-deployment-0.1.0.tgz" https://chartmuseum.35.198.84.6/api/charts
+➜  kubernetes-templating git:(kubernetes-templating) ✗ curl -k --data-binary "@web-deployment-0.1.0.tgz" https://chartmuseum.35.198.84.6.xip.io/api/charts
 {"saved":true}% 
 ```
 4. устанавливаем из репозитория
@@ -136,3 +137,32 @@ kubectl apply -f harbor/harbor-namespace.yaml
 helm3 upgrade --install harbor harbor/harbor --wait --namespace=harbor --version=1.1.2 -f harbor/values.yaml
 ```
 ### Задание со * - Helmfile для установки nginx-ingres, cert-manager, harbor
+1. для примененения потребовался плагин diff
+```
+helm plugin install https://github.com/databus23/helm-diff
+```
+2. создаем chart для crd certmanager
+```
+cd helmfile
+helm create crds-cert-manager
+rm -rf crds-cert-manager/templates/*
+rm -rf crds-cert-manager/values.yaml
+wget -P crds-cert-manager/templates/ https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml
+```
+2. применяем helmfile (находимcя на уровне выше helmfile.d/ )
+```
+helmfile apply
+```
+### Создание своего  helm chart
+1. Создадим свой чарт
+```
+helm create socks-shop
+rm -rf socks-shop/templates/*
+rm -rf socks-shop/values.yaml
+wget -P socks-shop/templates https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-04/05-Templating/manifests/all.yaml
+helm upgrade --install socks-shop socks-shop 
+```
+2. Вынесем frontend отдельно.
+```
+helm upgrade --install socks-shop socks-shop --namespace socks-shop --set frontend.service.NodePort=31234
+```
