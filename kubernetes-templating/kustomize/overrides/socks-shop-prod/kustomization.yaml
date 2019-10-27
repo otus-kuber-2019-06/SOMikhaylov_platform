@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: default
+namePrefix: prod- 
+commonLabels:
+  environment: socks-shop-prod
+images:
+- name: weaveworksdemos/payment
+  newTag: 0.4.3
+bases:
+- ../../base
+

@@ -8,3 +8,6 @@ service:
   port: 80
   targetPort: 8079
   NodePort: 30001
+
+ingress:
+  host: shop.35.198.84.6.xip.io

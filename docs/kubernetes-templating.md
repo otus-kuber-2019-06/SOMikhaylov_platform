@@ -22,6 +22,9 @@ version.BuildInfo{Version:"v3.0.0-beta.4", GitCommit:"7ffc879f137bd3a69eea53349b
 * установлен Harbor с доступом через ingress по https
 5. Задание со * - Описан Helmfile для установки nginx-ingres, cert-manager, harbor
 6. Создан свой helm chart
+7. Задание со *: свой чарт mysql
+8. Задание с Kubecfg
+9. Задание с Kustomize
 
 ### Helm 2 и tiller с правами cluster-admin
 1. Создаем service account tiller и даем ему роль cluster-admin
@@ -84,12 +87,10 @@ cert-manager-55fff7f85f-swg46              1/1     Running   0          2m7s
 cert-manager-cainjector-54c4796c5d-qv9xp   1/1     Running   0          2m7s
 cert-manager-webhook-77ccf5c8b4-9fhlt      1/1     Running   0          2m7s
 ```
-3. Для корректной работы для генерации валидного сертификата Let's Encrypt (будем использовать staging сертификат) требуется создать ClusterIssuer и Certificate
+3. Для корректной работы для генерации валидного сертификата Let's Encrypt (будем использовать staging сертификат) требуется создать ClusterIssuer
 ```
 helm upgrade --install cert-manager jetstack/cert-manager --wait  --namespace=cert-manager --version=0.11.0 
-kubectl apply -f kubectl apply -f ingress-staging.yaml
 kubectl apply -f cert-manager/cluster-issuer.yaml
-kubectl apply -f cert-manager/certificate.yaml
 ```
 ### Helm 2 с плагином helm-tiller (позволяет отказаться отиспользования tiller внутри кластера)
 Установим плагин
@@ -154,7 +155,7 @@ wget -P crds-cert-manager/templates/ https://raw.githubusercontent.com/jetstack/
 helmfile apply
 ```
 ### Создание своего  helm chart
-1. Создадим свой чарт
+1. Создан свой чарт
 ```
 helm create socks-shop
 rm -rf socks-shop/templates/*
@@ -162,7 +163,45 @@ rm -rf socks-shop/values.yaml
 wget -P socks-shop/templates https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-04/05-Templating/manifests/all.yaml
 helm upgrade --install socks-shop socks-shop 
 ```
-2. Вынесем frontend отдельно.
+2. Вынесен frontend отдельно, добавим зависисмости в requirements.yaml
 ```
+helm dep update socks-shop
 helm upgrade --install socks-shop socks-shop --namespace socks-shop --set frontend.service.NodePort=31234
+```
+
+#### Задание со * chart mysql
+1. создан chart mysql
+2. Добавлена зависимость requirements.yaml sock-shop
+3. создан values.yaml
+4. вынесены deployment и service mysql
+```
+helm dep update socks-shop
+helm upgrade --install socks-shop socks-shop --namespace socks-shop --set frontend.service.NodePort=31234
+```
+### Kubecfg
+1. Созданы необходимые файлы для выполнения задания
+```
+kubecfg
+├── catalogue-deployment.yaml
+├── catalogue-service.yaml
+├── payment-deployment.yaml
+├── payment-service.yaml
+└── services.jsonnet
+```
+2. Проверка правильности генерирования манифестов
+```
+kubecfg show kubecfg/services.jsonnet
+```
+3. Установка
+```
+kubecfg update kubecfg/services.jsonnet --namespace socks-shop
+```
+### Kustomize
+1. kustomизирован сервис payment
+2. Установка
+```
+kubectl apply -k kustomize/overrides/socks-shop
+```
+```
+kubectl apply -k kustomize/overrides/socks-shop-prod
 ```
