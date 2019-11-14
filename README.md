@@ -10,6 +10,7 @@ SOMikhaylov Platform repository
 * [Домашнее задание 6 -  Диагностика и отладка кластера и приложений в нем.](docs/kubernetes-debug.md)
 * [Домашнее задание 7 -  Custom Resource Definitions. Operators – Новый помощник платформенной и продуктовым командам. ](docs/kubernetes-operators.md)
 * [Домашнее задание 10 - Шаблонизация манифестов Kubernetes. Helm и его аналоги (Jsonnet, Kustomize)](docs/kubernetes-templating.md)
+* [Домашнее задание 11 - Хранилище секретов для приложений. Vault. ](docs/kubernetes-vault.md)
 
 ## Прочее
 * [Полезные команды.](docs/commands.md)
